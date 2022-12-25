@@ -8,5 +8,8 @@ server:
 client:
 	go run client/main.go
 
-.PHONY: protoc server client
+test:
+	go test -v ./...
+
+.PHONY: protoc server client test
 
