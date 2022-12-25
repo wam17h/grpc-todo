@@ -39,28 +39,25 @@ func main() {
 		{Name: "add auth to ctx", Description: "Add auth headers in the context", Done: false},
 		{Name: "write medium tutorial", Description: "Write a better grpc tutorial", Done: false},
 		{Name: "Go To Gym", Description: "Review grpc code", Done: false},
-		{Name: "error", Description: "This will produce an error", Done: false},
+		{Name: "", Description: "This will produce an error", Done: false},
 	}
 
 	//ctx = context.WithValue(ctx, "authorization", "Bearer <your-jwt-token>")
 
 	newHeaders := metadata.New(map[string]string{
-		"x-custom-header": "some value",
-		"authorization":   "my secret jwt",
+		"x-trace_id":    "1225-two-words",
+		"authorization": "myverysecretkey",
 	})
 	ctx = metadata.NewOutgoingContext(ctx, newHeaders)
 
 	for _, todo := range todos {
 		res, err := c.CreateTodo(ctx, &pb.NewToDo{Name: todo.Name, Description: todo.Description, Done: todo.Done})
 		if err != nil {
-			log.Printf("%+v\n", err)
+			// log.Printf("%+v\n", err)
 			log.Fatalf("could not create todo: %v", err)
 		}
 
-		log.Printf(`
-			ID: %s
-			Name: %s
-			`, res.GetId(), res.GetName())
+		log.Printf(`ID: %s, Name: %s`, res.GetId(), res.GetName())
 	}
 
 }
