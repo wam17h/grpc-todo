@@ -3,6 +3,26 @@
 A proof of concept GRPC server and client written in Golang.  
 Based on the code from: https://www.golinuxcloud.com/golang-grpc/
 
+## Installing protobuffer
+
+* for macs: `brew install protobuff` - this will install the protoc command line tool  
+* for linux: `sudo apt install -y protobuf-compiler`
+
+### golang libs for protobuffers
+
+```
+go install google.golang.org/protobuf/cmd/protoc-gen-go
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+```
+
+NOTE: You should add the `protoc-gen-go-grpc` to your PATH
+
+```
+PATH="${PATH}:${HOME}/go/bin"
+
+```
+
+
 ## Instructions:  
 * check out the code
 * run `make server`, this will start a server listening on port 50051
