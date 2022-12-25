@@ -53,7 +53,6 @@ func main() {
 	for _, todo := range todos {
 		res, err := c.CreateTodo(ctx, &pb.NewToDo{Name: todo.Name, Description: todo.Description, Done: todo.Done})
 		if err != nil {
-			// log.Printf("%+v\n", err)
 			log.Fatalf("could not create todo: %v", err)
 		}
 
