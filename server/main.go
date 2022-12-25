@@ -26,25 +26,32 @@ type server struct {
 }
 
 func (s *server) CreateTodo(ctx context.Context, in *pb.NewToDo) (*pb.Todo, error) {
-	log.Printf("Received: %v", in.GetName())
 	//create a random ID for this todo
 
 	headers, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, status.Error(codes.InvalidArgument, "Cannot read headers")
 	}
+	if len(headers.Get("x-trace_id")) == 0 {
+		log.Println("ERROR: missing trace_id")
+		return nil, status.Error(codes.InvalidArgument, "no trace_id")
+	}
+	trace_id := headers.Get("x-trace_id")[0]
+	log.Printf("%s: New Req: %v", trace_id, in.GetName())
+
 	// fmt.Printf("%+v\n", headers)
 	// Get the value for the "authorization" key from the headers
 	authorization := headers.Get("authorization")
-	fmt.Println("Authorization header:", authorization)
-
-	// ctype := headers.Get("content-type")
-	// fmt.Println("content-type:", ctype)
-
-	// todo test how an error is handled
-	if in.GetName() == "error" {
-		// return one of these codes https://pkg.go.dev/google.golang.org/grpc/codes
+	log.Printf("Authorization header: %v\n", authorization)
+	if len(authorization) == 0 || authorization[0] != "myverysecretkey" {
+		log.Println("ERROR: bad auth")
 		return nil, status.Error(codes.Unauthenticated, "Not authenticated")
+	}
+
+	if in.GetName() == "" {
+		// return one of these codes https://pkg.go.dev/google.golang.org/grpc/codes
+		log.Println("ERROR: invalid arg: name")
+		return nil, status.Error(codes.InvalidArgument, "Invalid argument: Name")
 	}
 
 	//todo: add the other bits of the todo - desc and done
